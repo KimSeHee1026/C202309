@@ -4,10 +4,12 @@
 int multiF(int value);
 
 // 사용자에게 입력값을 계산 후 출력하는 함수
-void main() {
+int main() {
 	printf("1부터 2까지의 곱은 %d\n", multiF(2));
 	printf("1부터 3까지의 곱은 %d\n", multiF(3));
 	printf("1부터 5까지의 곱은 %d\n", multiF(5));
+
+	return 0;
 }
 
 // muntiF() 함수들을 모두 곱해주는 함수

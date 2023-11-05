@@ -47,7 +47,6 @@ void sumScores(int scores[]) {
 	all_average = sum_result / STUDENTS;
 	printf("학생들 점수의 총 합은 %d 이고. 평균 값은 %f 입니다.\n", sum_result, all_average);
 
-	return 0;
 }
 
 // 학생들 성적의 순위를 매기는 함수

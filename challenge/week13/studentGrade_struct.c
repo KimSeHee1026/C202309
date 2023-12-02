@@ -2,12 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-// 학생 수 상수 생정의
-#define STUDENTS 50
 
 // 구조체 생성
 struct std_Info {
-    char name[50];  //이름을 문자열로 저장하기 위해 배열로 변경
+    char* name;
     int scores;
     int std_num;
 };
@@ -23,13 +21,8 @@ int main() {
     int input_std_num; // 학생 수 입력 변수
 
     // 사용자에게 학생 수 입력 받기
-    printf("학생 수를 입력하세요 (최대 %d명): ", STUDENTS);
+    printf("학생 수를 입력하세요: ");
     scanf_s("%d", &input_std_num);
-
-    if (input_std_num <= 0 || input_std_num > STUDENTS) {
-        printf("올바르지 않은 학생 수입니다. 프로그램을 종료합니다.\n");
-        return 1;
-    }
 
     // 구조체 포인터를 사용하여 동적으로 배열 할당
     struct std_Info* students = (struct std_Info*)malloc(input_std_num * sizeof(struct std_Info));
@@ -52,9 +45,13 @@ int main() {
     scanf_s(" %c", &target); // 공백을 추가하여 이전 입력 버퍼를 비우도록 함
 
     // 학생의 성적 분류 및 출력
-    classifyStudents(students, target);
-    sumScores(students);
-    printRanks(students);
+    classifyStudents(students, input_std_num, target);
+    sumScores(students, input_std_num);
+    printRanks(students, input_std_num);
+
+    for (int i = 0; i < input_std_num; i++) {
+        free(students[i].name);
+    }
 
     // 동적 할당된 메모리 해제
     free(students);
@@ -64,6 +61,7 @@ int main() {
 
 // 학생의 이름을 입력하는 함수
 void nameInfo(struct std_Info* student) {
+    student->name = (char*)malloc((strlen(student) + 1) * sizeof(char));
     printf("이름: ");
     scanf_s("%s", student->name, (int)sizeof(&(student->name)));
 }
@@ -71,14 +69,14 @@ void nameInfo(struct std_Info* student) {
 // 학생의 성적을 입력하는 함수
 void scoresInfo(struct std_Info* student) {
     printf("성적: ");
-    scanf_s("%d", &(student->scores), (int)sizeof(&(student->scores)));
+    scanf_s("%d", &(student->scores));
 }
 
 // 나머지 함수들에서 구조체 멤버 변수를 불러와 동작하게끔 수정
-void classifyStudents(struct std_Info* students, char targetGrade) {
+void classifyStudents(struct std_Info* students, int numStudents, char targetGrade) {
     printf("학생 성적 분류:\n");
 
-    for (int i = 0; i < STUDENTS; i++) {
+    for (int i = 0; i < numStudents; i++) {
         char grade = ' ';
 
         if (students[i].scores >= 90) {
@@ -104,23 +102,23 @@ void classifyStudents(struct std_Info* students, char targetGrade) {
 }
 
 //학생들의 점수 총합과 평균을 출력하는 함수
-void sumScores(struct std_Info* students) {
+void sumScores(struct std_Info* students, int numStudents) {
     int all_sum = 0;
 
-    for (int i = 0; i < STUDENTS; i++) {
+    for (int i = 0; i < students; i++) {
         all_sum += students[i].scores;
     }
 
-    double all_average = (double)all_sum / STUDENTS;
+    double all_average = (double)all_sum / numStudents;
     printf("학생들 점수의 총 합은 %d 이고. 평균 값은 %f 입니다.\n", all_sum, all_average);
 }
 
 // 학생들 순위 출력하는 함수
-void printRanks(struct std_Info* students) {
-    for (int i = 0; i < STUDENTS; i++) {
+void printRanks(struct std_Info* students, int numStudents) {
+    for (int i = 0; i < numStudents; i++) {
         int ran = 0;
         // 다른 학생들과 비교하여 순위 결정
-        for (int j = 0; j < STUDENTS; j++) {
+        for (int j = 0; j < numStudents; j++) {
             if (students[i].scores >= students[j].scores) {
                 ran += 1;
             }
